@@ -1,0 +1,21 @@
+﻿<section>
+    <div class="panel panel-header"> 
+    </div>
+    <div class="panel panel-body pull-left">
+        <div class="container-fluid">
+            <nav class="col-lg-3" id="sideNav">
+                <ul class="list-group">
+                    <li style="list-style: none; text-align: center; color: white; font-size:24px"><strong>List of Companies</strong></li>
+                    <li class="list-group-item" ng-repeat="row in ctrl.industries.company">
+                        <a href="#">{{row.name}}</a>
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="#" ng-click="getHistoricalData(row.symbol)">Historical Data</a> </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+            <div class="col-lg-9"></div>
+        </div>
+    </div>
+</section>

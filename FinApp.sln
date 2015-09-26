@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinApp", "FinApp\FinApp.csproj", "{50AADA05-60F5-4747-B145-EA388ED5EED0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinApp.Models", "FinApp.Models\FinApp.Models.csproj", "{832F9D49-6FC5-4F13-B9D0-07C9DE5E97DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinApp.MiddleWare", "FinApp.MiddleWare\FinApp.MiddleWare.csproj", "{F5769428-46E9-4027-B1A5-0CC3A38268F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50AADA05-60F5-4747-B145-EA388ED5EED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50AADA05-60F5-4747-B145-EA388ED5EED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50AADA05-60F5-4747-B145-EA388ED5EED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50AADA05-60F5-4747-B145-EA388ED5EED0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{832F9D49-6FC5-4F13-B9D0-07C9DE5E97DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{832F9D49-6FC5-4F13-B9D0-07C9DE5E97DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{832F9D49-6FC5-4F13-B9D0-07C9DE5E97DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{832F9D49-6FC5-4F13-B9D0-07C9DE5E97DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5769428-46E9-4027-B1A5-0CC3A38268F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5769428-46E9-4027-B1A5-0CC3A38268F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5769428-46E9-4027-B1A5-0CC3A38268F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5769428-46E9-4027-B1A5-0CC3A38268F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

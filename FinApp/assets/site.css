@@ -1,0 +1,52 @@
+﻿body {
+}
+#sideNav {
+    width: auto;
+}
+#sideNav ul ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+#sideNav ul {
+    position: relative;
+    z-index: 397;
+}
+
+#sideNav ul li {
+    min-height: 1px;
+    line-height: 1em;
+    vertical-align: middle;
+    background: #778899;
+ }
+
+#sideNav ul li:hover {
+    position: relative;
+    z-index: 399;
+    cursor: default;
+}
+
+#sideNav ul ul{
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 398;
+    width: 100%
+}
+
+#sideNav ul li:hover >ul {
+    visibility: visible;
+}
+
+#sideNav ul ul {
+    top: 0px;
+    left: 99%;
+}
+
+#sideNav a {
+    color: white !important;
+       text-decoration: none;
+}
