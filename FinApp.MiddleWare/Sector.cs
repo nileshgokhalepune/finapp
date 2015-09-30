@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 
 namespace FinApp.MiddleWare
 {
@@ -16,7 +17,10 @@ namespace FinApp.MiddleWare
 
         private void GetSectorsCsv(int id = 0)
         {
-            WebRequest
+            WebRequest request = WebRequest.Create(BizCsvPath + Csv + CONAMEUCSV);
+            var response = request.GetResponse();
+            var csv = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
         }
 
     }
