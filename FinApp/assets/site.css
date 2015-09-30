@@ -50,3 +50,38 @@
     color: white !important;
        text-decoration: none;
 }
+
+canvas {
+    border-width: 5px;
+    border-style: dashed;
+    border-color: rgba(20, 126, 239, 0.50)
+}
+
+
+div.scrollableContainer {
+    position: relative;
+    width: 100%;
+}
+
+div.scrollingArea {
+    height: 80vh;
+    overflow: auto;
+    padding: 3px;
+}
+
+table.scrollable thead tr {
+    width: 100%;
+    top: 0;
+    position: absolute;
+}
+
+    table.scrollable thead tr td {
+        background-color: #337ab7;
+    }
+
+    table.scrollable thead tr th {
+        border-bottom: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        left: 0;
+    }

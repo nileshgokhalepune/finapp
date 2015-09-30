@@ -1,21 +1,61 @@
 ﻿<section>
-    <div class="panel panel-header"> 
+    <div class="panel panel-header">
+        <div class="form-inline">
+            <label>Sectors</label>
+            <select ng-options="sector.sectorName for sector in ctrl.sectors" ng-model="ctrl.sector" class="form-control" ng-change="ctrl.getIndustries(sector.sectorId)"></select>
+            <label>Search Stock/Company</label>
+            <input type="text" ng-model="ctrl.searchQuote" class="form-control" />
+        </div>
     </div>
-    <div class="panel panel-body pull-left">
-        <div class="container-fluid">
-            <nav class="col-lg-3" id="sideNav">
-                <ul class="list-group">
-                    <li style="list-style: none; text-align: center; color: white; font-size:24px"><strong>List of Companies</strong></li>
-                    <li class="list-group-item" ng-repeat="row in ctrl.industries.company">
-                        <a href="#">{{row.name}}</a>
+    <div class="row">
+        <div class="col-lg-3">
+            <!--<div class="scrollableContainer">
+                <div class="scrollingArea">-->
+                    <nav id="sideNav">
                         <ul class="list-group">
-                            <li class="list-group-item"><a href="#" ng-click="getHistoricalData(row.symbol)">Historical Data</a> </li>
-                        </ul>
-                    </li>
+                            <li style="list-style: none; text-align: center; color: white; font-size:24px"><strong>List of Companies</strong></li>
+                            <li class="list-group-item" ng-repeat="row in ctrl.industries.company">
+                                <a href="#">{{row.name}}</a>
+                                <ul class="list-group">
+                                    <li class="list-group-item"><a href="#" ng-click="ctrl.getHistoricalData(row.symbol)">Historical Data</a> </li>
+                                </ul>
+                            </li>
 
-                </ul>
-            </nav>
-            <div class="col-lg-9"></div>
+                        </ul>
+                    </nav>
+                <!--</div>
+            </div>-->
+        </div>
+
+        <div class="col-lg-9">
+            <div class="scrollableContainer">
+                <div class="scrollingArea">
+                    <label class="bg bg-info">{{ctrl.selectedHistoricalSymbol}}</label>
+                    <table class="table table-striped table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Open</th>
+                                <th>High</th>
+                                <th>Low</th>
+                                <th>Close</th>
+                                <th>Volume</th>
+                            </tr>
+                        </thead>
+                        <tr ng-repeat="row in ctrl.historyData">
+                            <td>{{row.date}}</td>
+                            <td>{{row.open}}</td>
+                            <td>{{row.high}}</td>
+                            <td>{{row.low}}</td>
+                            <td>{{row.close}}</td>
+                            <td>{{row.volume}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="chart" width="500px" height="450px">
+
         </div>
     </div>
 </section>

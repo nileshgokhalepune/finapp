@@ -9,6 +9,7 @@
     function data($http) {
         this.checkSiteStatus = checkSiteStatus;
         this.getSectors = getSectors;
+        this.getIndustries = getIndustries;
         this.getHistoricalData = getHistoricalData;
         this.baseUrl = 'api/data';
 
@@ -21,7 +22,7 @@
         }
 
         function broadCast() {
-            
+
         }
 
         function checkSiteStatus() {
@@ -31,6 +32,11 @@
 
         function getSectors() {
             var promise = $http({ method: 'GET', url: this.baseUrl + '/sectors' });
+            return promise;
+        }
+
+        function getIndustries(sectorId) {
+            var promise = $http({ method: 'GET', url: this.baseUrl + '/industry', params: { sectorID: sectorId } });
             return promise;
         }
 

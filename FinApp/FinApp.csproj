@@ -19,6 +19,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -105,10 +106,6 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FinApp.MiddleWare\FinApp.MiddleWare.csproj">
-      <Project>{f5769428-46e9-4027-b1a5-0cc3a38268f7}</Project>
-      <Name>FinApp.MiddleWare</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FinApp.Models\FinApp.Models.csproj">
       <Project>{832f9d49-6fc5-4f13-b9d0-07c9de5e97de}</Project>
       <Name>FinApp.Models</Name>

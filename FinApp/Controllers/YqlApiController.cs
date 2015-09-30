@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using FinApp.MiddleWare;
 
 namespace FinApp.Controllers
 {
@@ -27,13 +26,30 @@ namespace FinApp.Controllers
 
         [HttpGet]
         [Route("sectors", Name = "sectors")]
-        public HttpResponseMessage GetSectors(string scripName = "")
+        public HttpResponseMessage GetSectors()
         {
             try
             {
-                YqlManager manager = new YqlManager();
-                var list = manager.GetIndustries(112.ToString());
-                return Request.CreateResponse(HttpStatusCode.OK, list);
+                return null;
+                //YqlManager manager = new YqlManager();
+                //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("industry", Name = "industry")]
+        public HttpResponseMessage GetIndustries(string sectorID = "")
+        {
+            try
+            {
+                return null;
+                //YqlManagerB manager = new YqlManager();
+                //var list = manager.GetIndustries(sectorID);
+                //return Request.CreateResponse(HttpStatusCode.OK, list);
             }
             catch (Exception ex)
             {
@@ -46,12 +62,14 @@ namespace FinApp.Controllers
         {
             try
             {
-                YqlManager manager = new YqlManager();
-                
+                return null;
+                //YqlManager manager = new YqlManager();
+                //var quotes = manager.GetHistory(symbol);
+                //return Request.CreateResponse(HttpStatusCode.OK, quotes);
             }
             catch (Exception ex)
             {
-                
+                return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
     }

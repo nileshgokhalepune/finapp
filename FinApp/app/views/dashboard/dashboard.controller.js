@@ -8,29 +8,40 @@
     function DashboardCtrl($q, $log, DataSvc) {
         var ctrl = this;
         ctrl.industries = '';
+        ctrl.sectors = '';
+        ctrl.getHistoricalData = getHistoricalData;
+        ctrl.getIndustries = getIndustries;
         activate();
 
         function activate() {
-            var q = [];
-
             DataSvc.checkSiteStatus().then(function () {
                 $log.debug("success");
-                q.push(DataSvc.getSectors());
-
-                $q.all(q).then(function (response) {
-                    ctrl.industries = response[0].data;
+                DataSvc.getSectors().then(function (response) {
+                    ctrl.sectors = response.data;
                 }).catch(function (error) {
                     $log.error(error);
                 });
 
             }).catch(function (error) {
-
                 $log.error(error);
             });
         }
+        
+        function getIndustries(sectorId) {
+            DataSvc.getIndustries(ctrl.sector.sectorId).then(function () {
 
-        ctrl.getHistoricalData = function(symbol) {
-            DataSvc
+            }).catch(function (error) {
+
+            });
+        }
+
+        function getHistoricalData(symbol) {
+            ctrl.selectedHistoricalSymbol = symbol;
+            DataSvc.getHistoricalData(symbol).then(function (response) {
+                ctrl.historyData = response.data;
+            }).catch(function (error) {
+                toastr.error(error.message);
+            });
         }
     }
 })();

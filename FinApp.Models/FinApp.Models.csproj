@@ -46,6 +46,8 @@
     <Compile Include="CompanyModel.cs" />
     <Compile Include="IndustryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuoteModel.cs" />
+    <Compile Include="SectorModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
