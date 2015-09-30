@@ -4,6 +4,19 @@ using System.Reflection;
 
 namespace FinApp.MiddleWare
 {
+    public enum YqlTables
+    {
+        [StringValue("yahoo.finance.sectors")]
+        YahooFinanceSectors,
+        [StringValue("yahoo.finance.industry")]
+        YahooFinanceIndustries,
+        [StringValue("yahoo.finance.quotes")]
+        YahooFinanceQuotes,
+        [StringValue("yahoo.finance.historicaldata")]
+        YahooFinanceHistoricalData
+    }
+
+
     public class StringValueAttribute : Attribute
     {
         private readonly string _value;

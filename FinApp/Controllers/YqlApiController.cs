@@ -30,6 +30,7 @@ namespace FinApp.Controllers
         {
             try
             {
+                SectorManager
                 return null;
                 //YqlManager manager = new YqlManager();
                 //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);
