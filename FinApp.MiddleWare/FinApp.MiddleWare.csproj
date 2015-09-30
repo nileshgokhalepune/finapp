@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FinApp.MiddleWare</RootNamespace>
     <AssemblyName>FinApp.MiddleWare</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,6 +48,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FinApp.Helpers\FinApp.Helpers.csproj">
+      <Project>{2074acc5-69bc-482e-b747-582f8e9babd7}</Project>
+      <Name>FinApp.Helpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinApp.Models\FinApp.Models.csproj">
+      <Project>{832f9d49-6fc5-4f13-b9d0-07c9de5e97de}</Project>
+      <Name>FinApp.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

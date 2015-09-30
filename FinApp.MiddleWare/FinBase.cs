@@ -15,12 +15,14 @@ namespace FinApp.MiddleWare
         protected const string Csv = "csv/";
         protected const string CONAMEUHTML = "conameu.html";
         protected const string CONAMEUCSV = "conameu.csv";
+        protected const string CONAMEUSCS_PREFIX = "s_";
 
 
         protected FinBase()
         {
             YqlPath = ConfigurationManager.AppSettings["yqlUrl"];
             BizPath = ConfigurationManager.AppSettings["yahooBizUrl"];
+            BizCsvPath = BizPath + Csv;
         }
 
     }

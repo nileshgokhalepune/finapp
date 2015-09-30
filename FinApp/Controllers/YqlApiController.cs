@@ -1,7 +1,9 @@
-﻿using System;
+﻿using FinApp.MiddleWare;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+
 
 namespace FinApp.Controllers
 {
@@ -30,7 +32,8 @@ namespace FinApp.Controllers
         {
             try
             {
-                SectorManager
+                SectorManager manager = new SectorManager();
+
                 return null;
                 //YqlManager manager = new YqlManager();
                 //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);

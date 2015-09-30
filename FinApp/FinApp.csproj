@@ -106,6 +106,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FinApp.MiddleWare\FinApp.MiddleWare.csproj">
+      <Project>{ef28b2a1-c608-4298-9377-412e0e8cabff}</Project>
+      <Name>FinApp.MiddleWare</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FinApp.Models\FinApp.Models.csproj">
       <Project>{832f9d49-6fc5-4f13-b9d0-07c9de5e97de}</Project>
       <Name>FinApp.Models</Name>
