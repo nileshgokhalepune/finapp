@@ -11,6 +11,8 @@
         ctrl.sectors = '';
         ctrl.getHistoricalData = getHistoricalData;
         ctrl.getIndustries = getIndustries;
+        ctrl.getStocks = getStocks;
+
         activate();
 
         function activate() {
@@ -26,10 +28,10 @@
                 $log.error(error);
             });
         }
-        
-        function getIndustries(sectorId) {
-            DataSvc.getIndustries(ctrl.sector.sectorId).then(function () {
 
+        function getIndustries(sectorId) {
+            DataSvc.getIndustries(ctrl.sector.sectorId).then(function (response) {
+                ctrl.industries = response.data;
             }).catch(function (error) {
 
             });
@@ -41,6 +43,13 @@
                 ctrl.historyData = response.data;
             }).catch(function (error) {
                 toastr.error(error.message);
+            });
+        }
+
+        function getStocks(id) {
+            DataSvc.getStocks(id).then(function (response) {
+                ctrl.companies = response.data;
+            }).catch(function (error) {
             });
         }
     }

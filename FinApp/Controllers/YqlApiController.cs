@@ -29,13 +29,13 @@ namespace FinApp.Controllers
             }
         }
 
-        [HttpGet] 
+        [HttpGet]
         [Route("sectors", Name = "sectors")]
-        public HttpResponseMessage GetSectors()
+        public HttpResponseMessage GetSectors(int sectorId = 0)
         {
             try
             {
-                SectorManager manager = new SectorManager();
+                SectorManager manager = new SectorManager(true);
                 return Request.CreateResponse(HttpStatusCode.OK, manager.SectorList);
                 //YqlManager manager = new YqlManager();
                 //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);
@@ -48,11 +48,24 @@ namespace FinApp.Controllers
 
         [HttpGet]
         [Route("industry", Name = "industry")]
-        public HttpResponseMessage GetIndustries(string sectorID = "")
+        public HttpResponseMessage GetIndustries(int sectorID = 0)
         {
             try
             {
-                return null;
+                SectorManager manager = new SectorManager();
+                var industries = manager.GetSector(sectorID);
+                return Request.CreateResponse(HttpStatusCode.OK, industries);
+                //SectorManager manager = new SectorManager();
+                ////var list = manager.GetSubSector(sectorID);
+                //if (list.Count > 0)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, new { HasSectors = true, Sectors = list });
+                //}
+                //else
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, list);
+                //}
+
                 //YqlManagerB manager = new YqlManager();
                 //var list = manager.GetIndustries(sectorID);
                 //return Request.CreateResponse(HttpStatusCode.OK, list);
@@ -62,6 +75,16 @@ namespace FinApp.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
+
+        [HttpGet]
+        [Route("stocks", Name = "stocks")]
+        public HttpResponseMessage GetStocks(int id)
+        {
+            StockManager manager = new StockManager();
+            var list = manager.GetCompanies(id);
+            return Request.CreateResponse(HttpStatusCode.OK, list);
+        }
+
         [HttpGet]
         [Route("history", Name = "history")]
         public HttpResponseMessage GetHistoricalData(string symbol)

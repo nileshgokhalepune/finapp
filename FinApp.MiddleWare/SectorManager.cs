@@ -13,60 +13,90 @@ namespace FinApp.MiddleWare
 
         public List<SectorModel> SectorList { get; set; }
 
-        public SectorManager()
+        public SectorManager(bool loadDefault = false)
         {
-            LoadSectors();
+            if (loadDefault)
+                LoadSectors();
         }
 
         private void LoadSectors()
         {
             //Initial load of the sectors csv file
             var sectors = GetSectorsCsv();
-            foreach (var sector in sectors)
-            {
-                var id = GetSectorIds(sector.SectorName);
-                sector.SectorId = id;
-            }
+            //foreach (var sector in sectors)
+            //{
+            //    var id = GetSectorId(sector.SectorName);
+            //    sector.SectorId = id;
+            //}
 
             SectorList = sectors;
         }
 
+        public List<SectorModel> GetSector(int sectorId)
+        {
+            var list = GetSectorsCsv(sectorId);
+            return list;
+        }
+
         private List<SectorModel> GetSectorsCsv(int id = 0)
         {
-            WebRequest request = WebRequest.Create(BizCsvPath + CONAMEUSCS_PREFIX + CONAMEUCSV);
+            var sectorId = id == 0 ? CONAMEUSCS_PREFIX : id.ToString();
+            WebRequest request = WebRequest.Create(BizCsvPath + sectorId + CONAMEUCSV);
             var csv = Helper.GetResponseText(request.GetResponse());
             var rows = csv.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             List<SectorModel> sectorsList = new List<SectorModel>();
             for (int i = 1; i < rows.Length; i++)
             {
                 var columns = rows[i].Split(',');
-                sectorsList.Add(new SectorModel() { SectorName = columns[0].Replace("\"", "") });
+                if (columns[0] == "\0") continue;
+                var sectorid = GetSectorId(columns[0].Replace("\"", ""), id);
+                sectorsList.Add(new SectorModel() { SectorName = columns[0].Replace("\"", ""), SectorId = sectorid });
+
             }
 
             return sectorsList;
         }
 
-        private void FetchSectorHtml()
+        private void FetchSectorHtml(string sectorId = "")
         {
-            WebRequest request = WebRequest.Create(BizPath + CONAMEUSCS_PREFIX + CONAMEUHTML);
+            sectorId = string.IsNullOrEmpty(sectorId) ? CONAMEUSCS_PREFIX : sectorId;
+            WebRequest request = WebRequest.Create(BizPath + sectorId + CONAMEUHTML);
             SectorHtml = Helper.GetResponseText(request.GetResponse());
 
         }
 
-        private int GetSectorIds(string sectorName)
+        private int GetSectorId(string sectorName, int parentSectorId = 0)
         {
-            if (string.IsNullOrEmpty(SectorHtml)) FetchSectorHtml();
-            var fIndex = SectorHtml.IndexOf(sectorName);
+            if (string.IsNullOrEmpty(SectorHtml)) FetchSectorHtml(parentSectorId == 0 ? "" : parentSectorId.ToString());
+            var searchFor = "-1>" + sectorName;
+            var fIndex = SectorHtml.IndexOf(searchFor);
             if (fIndex == -1)
             {
-                fIndex = SectorHtml.IndexOf(sectorName.Replace(" ", System.Environment.NewLine));
-                if (fIndex == -1) fIndex = SectorHtml.IndexOf(sectorName.Replace(" ", "\n"));
+                fIndex = SectorHtml.IndexOf(searchFor.Replace(" ", System.Environment.NewLine));
+                if (fIndex == -1) fIndex = SectorHtml.IndexOf(searchFor.Replace(" ", "\n"));
                 if (fIndex == -1) return 0;
             }
             var sectortext = SectorHtml.Substring(0, fIndex);
             var startIndex = sectortext.LastIndexOf(CONAMEUHTML) - 1;
-            var conname = sectortext.Substring(startIndex, CONAMEUHTML.Length + 1);
-            return Convert.ToInt32(conname.Substring(0, 1));
+            var countNum = 1;
+            for (int j = startIndex; ; j--)
+            {
+                int result;
+                if (Int32.TryParse(sectortext[j].ToString(), out result))
+                {
+                    if (j < startIndex)
+                    {
+                        startIndex -= 1;
+                        countNum++;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+            var conname = sectortext.Substring(startIndex, CONAMEUHTML.Length + countNum);
+            return Convert.ToInt32(conname.Substring(0, conname.IndexOf(CONAMEUHTML)));
         }
 
 

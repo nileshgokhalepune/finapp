@@ -8,54 +8,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-3">
-            <!--<div class="scrollableContainer">
-                <div class="scrollingArea">-->
-                    <nav id="sideNav">
-                        <ul class="list-group">
-                            <li style="list-style: none; text-align: center; color: white; font-size:24px"><strong>List of Companies</strong></li>
-                            <li class="list-group-item" ng-repeat="row in ctrl.industries.company">
-                                <a href="#">{{row.name}}</a>
-                                <ul class="list-group">
-                                    <li class="list-group-item"><a href="#" ng-click="ctrl.getHistoricalData(row.symbol)">Historical Data</a> </li>
-                                </ul>
-                            </li>
-
-                        </ul>
-                    </nav>
-                <!--</div>
-            </div>-->
-        </div>
-
-        <div class="col-lg-9">
-            <div class="scrollableContainer">
-                <div class="scrollingArea">
-                    <label class="bg bg-info">{{ctrl.selectedHistoricalSymbol}}</label>
-                    <table class="table table-striped table-condensed table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Open</th>
-                                <th>High</th>
-                                <th>Low</th>
-                                <th>Close</th>
-                                <th>Volume</th>
-                            </tr>
-                        </thead>
-                        <tr ng-repeat="row in ctrl.historyData">
-                            <td>{{row.date}}</td>
-                            <td>{{row.open}}</td>
-                            <td>{{row.high}}</td>
-                            <td>{{row.low}}</td>
-                            <td>{{row.close}}</td>
-                            <td>{{row.volume}}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div id="chart" width="500px" height="450px">
-
+        <div class="col-lg-2">
+            <ul class="list-group">
+                <li ng-repeat="row in ctrl.industries" class="list-group-item"><a href="#" ng-click="ctrl.getStocks(row.sectorId)">{{row.sectorName}}</a></li>
+            </ul>
         </div>
     </div>
 </section>

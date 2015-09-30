@@ -16,7 +16,8 @@ namespace FinApp.MiddleWare
         protected const string CONAMEUHTML = "conameu.html";
         protected const string CONAMEUCSV = "conameu.csv";
         protected const string CONAMEUSCS_PREFIX = "s_";
-
+        protected const string ENVPARAM = "env=store://datatables.org/alltableswithkeys";
+        protected const string FORMATPARAM = "format=json";
 
         protected FinBase()
         {
