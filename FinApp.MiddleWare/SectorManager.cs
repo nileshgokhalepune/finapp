@@ -3,9 +3,9 @@ using System.Net;
 
 namespace FinApp.MiddleWare
 {
-    public class Sector : FinBase
+    public class SectorManager : FinBase
     {
-        public Sector()
+        public SectorManager()
         {
             LoadSectors();
         }
