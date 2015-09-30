@@ -26,7 +26,7 @@ namespace FinApp.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet] 
         [Route("sectors", Name = "sectors")]
         public HttpResponseMessage GetSectors()
         {
