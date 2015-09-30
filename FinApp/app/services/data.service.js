@@ -12,6 +12,8 @@
         this.getIndustries = getIndustries;
         this.getHistoricalData = getHistoricalData;
         this.getStocks = getStocks;
+        this.getQuote = getQuote;
+
         this.baseUrl = 'api/data';
 
         this.broadCast = broadCast;
@@ -48,6 +50,11 @@
 
         function getStocks(id) {
             var promise = $http({ method: 'GET', url: this.baseUrl + '/stocks', params: { id: id } });
+            return promise;
+        }
+
+        function getQuote(symbol) {
+            var promise = $http({ method: 'GET', url: this.baseUrl + '/quote', params: { symbol: symbol } });
             return promise;
         }
     }

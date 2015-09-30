@@ -12,6 +12,8 @@
         ctrl.getHistoricalData = getHistoricalData;
         ctrl.getIndustries = getIndustries;
         ctrl.getStocks = getStocks;
+        ctrl.getQuote = getQuote;
+
 
         activate();
 
@@ -48,9 +50,17 @@
 
         function getStocks(id) {
             DataSvc.getStocks(id).then(function (response) {
-                ctrl.companies = response.data;
+                ctrl.companies = response.data.company;
             }).catch(function (error) {
             });
+        }
+
+        function getQuote(symbol) {
+            DataSvc.getQuote(symbol).then(function (response) {
+                ctrl.quote = response.data;
+            }).catch(function (error) {
+
+            })
         }
     }
 })();

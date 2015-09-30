@@ -101,6 +101,23 @@ namespace FinApp.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
             }
         }
+
+        [HttpGet]
+        [Route("quote", Name = "quote")]
+        public HttpResponseMessage GetQuote(string symbol)
+        {
+            try
+            {
+                StockManager manager = new StockManager();
+                manager.GetQuote(symbol);
+
+            }catch(Exception ex)
+            {
+
+            }
+
+            return null;
+        }
     }
 }
 
