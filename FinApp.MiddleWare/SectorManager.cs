@@ -11,6 +11,8 @@ namespace FinApp.MiddleWare
     {
         private string SectorHtml { get; set; }
 
+        public List<SectorModel> SectorList { get; set; }
+
         public SectorManager()
         {
             LoadSectors();
@@ -22,8 +24,11 @@ namespace FinApp.MiddleWare
             var sectors = GetSectorsCsv();
             foreach (var sector in sectors)
             {
-                GetSectorIds(sector.SectorName);
+                var id = GetSectorIds(sector.SectorName);
+                sector.SectorId = id;
             }
+
+            SectorList = sectors;
         }
 
         private List<SectorModel> GetSectorsCsv(int id = 0)
@@ -43,7 +48,7 @@ namespace FinApp.MiddleWare
 
         private void FetchSectorHtml()
         {
-            WebRequest request = WebRequest.Create(BizPath + CONAMEUHTML);
+            WebRequest request = WebRequest.Create(BizPath + CONAMEUSCS_PREFIX + CONAMEUHTML);
             SectorHtml = Helper.GetResponseText(request.GetResponse());
 
         }
@@ -51,7 +56,14 @@ namespace FinApp.MiddleWare
         private int GetSectorIds(string sectorName)
         {
             if (string.IsNullOrEmpty(SectorHtml)) FetchSectorHtml();
-            var sectortext = SectorHtml.Substring(0, SectorHtml.IndexOf(sectorName));
+            var fIndex = SectorHtml.IndexOf(sectorName);
+            if (fIndex == -1)
+            {
+                fIndex = SectorHtml.IndexOf(sectorName.Replace(" ", System.Environment.NewLine));
+                if (fIndex == -1) fIndex = SectorHtml.IndexOf(sectorName.Replace(" ", "\n"));
+                if (fIndex == -1) return 0;
+            }
+            var sectortext = SectorHtml.Substring(0, fIndex);
             var startIndex = sectortext.LastIndexOf(CONAMEUHTML) - 1;
             var conname = sectortext.Substring(startIndex, CONAMEUHTML.Length + 1);
             return Convert.ToInt32(conname.Substring(0, 1));

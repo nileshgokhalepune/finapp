@@ -20,7 +20,10 @@ namespace FinApp.Controllers
                 var yqlResponse = yqlRequest.GetResponse();
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
+
+#pragma warning disable CS0168 // Variable is declared but never used
             catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
             {
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
@@ -33,8 +36,7 @@ namespace FinApp.Controllers
             try
             {
                 SectorManager manager = new SectorManager();
-
-                return null;
+                return Request.CreateResponse(HttpStatusCode.OK, manager.SectorList);
                 //YqlManager manager = new YqlManager();
                 //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);
             }
