@@ -4,6 +4,23 @@ namespace FinApp.Models
 {
     public class QuoteModel
     {
+        public string Symbol { get; set; }
+        public int? AverageDailyVolume { get; set; }
+        public float? Change { get; set; }
+        public float? DaysLow { get; set; }
+        public float? DaysHigh { get; set; }
+        public float? YearLow { get; set; }
+        public float? YearHigh { get; set; }
+        public string MarketCapitalization { get; set; }
+        public float? LastTradePriceOnly { get; set; }
+        public string DaysRange { get; set; }
+        public string Name { get; set; }
+        public string StockExchange { get; set; }
+
+    }
+
+    public class HistoryModel
+    {
         public DateTime Date { get; set; }
         public float Open { get; set; }
         public float High { get; set; }
@@ -12,4 +29,5 @@ namespace FinApp.Models
         public long Volumne { get; set; }
         public float Adj_Close { get; set; }
     }
+
 }

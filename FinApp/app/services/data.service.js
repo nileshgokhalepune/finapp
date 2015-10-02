@@ -13,6 +13,7 @@
         this.getHistoricalData = getHistoricalData;
         this.getStocks = getStocks;
         this.getQuote = getQuote;
+        this.getTrend = getTrend;
 
         this.baseUrl = 'api/data';
 
@@ -55,6 +56,11 @@
 
         function getQuote(symbol) {
             var promise = $http({ method: 'GET', url: this.baseUrl + '/quote', params: { symbol: symbol } });
+            return promise;
+        }
+
+        function getTrend(symbol) {
+            var promise = $http({ method: 'GET', url: this.baseUrl + '/trend', params: { symbol: symbol } });
             return promise;
         }
     }

@@ -15,5 +15,12 @@
             controllerAs: 'ctrl',
             templateUrl: 'app/views/dashboard/dashboard.html',
         });
+
+        $stateProvider.state('company', {
+            url: '/company/{symbol}',
+            controller: 'CompanyCtrl',
+            controllerAs: 'ctrl',
+            templateUrl: 'app/views/company/company.html'
+        })
     }
 })();

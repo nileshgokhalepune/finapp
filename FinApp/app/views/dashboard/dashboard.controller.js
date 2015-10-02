@@ -48,8 +48,8 @@
             });
         }
 
-        function getStocks(id) {
-            DataSvc.getStocks(id).then(function (response) {
+        function getStocks(row) {
+            DataSvc.getStocks(row.sectorId).then(function (response) {
                 ctrl.companies = response.data.company;
             }).catch(function (error) {
             });

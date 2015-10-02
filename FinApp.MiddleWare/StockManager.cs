@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net;
 
 namespace FinApp.MiddleWare
@@ -12,7 +13,7 @@ namespace FinApp.MiddleWare
     {
         private const string CompanySelectQuery = "Select * from yahoo.finance.industry where id = {0}";
         private const string QuoteSelectQuery = "Select * From yahoo.finance.quote where symbol = \"{0}\"";
-
+        private const string HistorySelectQuery = "Select * From yahoo.finance.historicaldata where symbol=\"{0}\" and startDate=\"{1}\" and endDate = \"{2}\"";
         public IndustryModel GetCompanies(int industryId)
         {
             WebRequest request = WebRequest.Create(YqlPath + string.Format(CompanySelectQuery, industryId) + "&" + ENVPARAM + "&" + FORMATPARAM);
@@ -23,10 +24,27 @@ namespace FinApp.MiddleWare
             return list;
         }
 
-        public void GetQuote(string symbol)
+        public QuoteModel GetQuote(string symbol)
         {
             WebRequest request = WebRequest.Create(YqlPath + string.Format(QuoteSelectQuery, symbol) + "&" + ENVPARAM + "&" + FORMATPARAM);
             var json = Helper.GetResponseText(request.GetResponse());
+            var jobj = JObject.Parse(json);
+            return Helper.DeserializeJson<QuoteModel>(JObject.Parse(jobj["query"]["results"]["quote"].ToString()));
+        }
+
+        public List<HistoryModel> GetHistory(string symbol, DateTime? startDate, DateTime? endDate)
+        {
+            if (startDate == null || endDate == null)
+            {
+                startDate = DateTime.Now.AddYears(-1);
+                endDate = DateTime.Now;
+            }
+            var startDateParam = String.Format("{0:yyyy-MM-dd}", startDate.Value);// DateTime.ParseExact(startDate.Value.ToShortDateString(), "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentUICulture);
+            var endDateParam = String.Format("{0:yyyy-MM-dd}", endDate.Value);// DateTime.ParseExact(endDate.Value.ToShortDateString(), "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentUICulture);
+            WebRequest request = WebRequest.Create(YqlPath + string.Format(HistorySelectQuery, symbol, startDateParam, endDateParam) + "&" + ENVPARAM + "&" + FORMATPARAM);
+            var json = Helper.GetResponseText(request.GetResponse());
+            var jobj = JObject.Parse(json);
+            return Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
         }
     }
 }

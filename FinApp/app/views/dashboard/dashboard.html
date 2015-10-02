@@ -9,12 +9,16 @@
     </div>
     <div class="row">
         <div class="col-lg-2">
-            <ul class="list-group">
-                <li ng-repeat="row in ctrl.industries" class="list-group-item"><a href="#" ng-click="ctrl.getStocks(row.sectorId)">{{row.sectorName}}</a></li>
-            </ul>
-        </div>
+            <div id="cssmenu">
+                <ul id="sideNav">
+                    <li class="active has-sub" ng-repeat="row in ctrl.industries">
+                        <a href="#" ng-click="ctrl.getStocks(row)"><span>{{row.sectorName}}</span> </a>
+                    </li>
+                </ul>
+            </div>
+        </div> 
         <div class="col-lg-10">
-            <ul class="list-inline"><li ng-repeat="company in ctrl.companies"><a href="#" ng-click="ctrl.getQuote(company.symbol)">{{company.name}}</a></li></ul>
+            <ul class="list-inline"><li ng-repeat="company in ctrl.companies"><a ui-sref="company({symbol: company.symbol})" >{{company.name}}</a></li></ul>
         </div>
     </div>
 </section>

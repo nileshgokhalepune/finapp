@@ -1,15 +1,19 @@
 ﻿using FinApp.MiddleWare;
+using FinApp.Models;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Web.Caching;
 using System.Web.Http;
-
+using System.Linq;
 
 namespace FinApp.Controllers
 {
     [RoutePrefix("api/data")]
     public class YqlApiController : ApiController
     {
+        private static object lockObject = new Object();
         [HttpGet]
         [Route("checkSiteStatus", Name = "checkSiteStatus")]
         public HttpResponseMessage CheckSiteStatus()
@@ -36,7 +40,15 @@ namespace FinApp.Controllers
             try
             {
                 SectorManager manager = new SectorManager(true);
-                return Request.CreateResponse(HttpStatusCode.OK, manager.SectorList);
+                lock (lockObject)
+                {
+                    if (System.Web.HttpContext.Current.Cache["Sectors"] == null)
+                    {
+                        System.Web.HttpContext.Current.Cache.Add("Sectors", manager.SectorList, null, DateTime.Now.AddMinutes(20), TimeSpan.Zero, CacheItemPriority.Default, null);
+                    }
+                }
+                var list = System.Web.HttpContext.Current.Cache["Sectors"] as List<SectorModel>;
+                return Request.CreateResponse(HttpStatusCode.OK, list);
                 //YqlManager manager = new YqlManager();
                 //return Request.CreateResponse(HttpStatusCode.OK, manager.CurrentSectors);
             }
@@ -52,8 +64,17 @@ namespace FinApp.Controllers
         {
             try
             {
+                List<SectorModel> industries;
                 SectorManager manager = new SectorManager();
-                var industries = manager.GetSector(sectorID);
+                if (System.Web.HttpContext.Current.Cache[sectorID.ToString()] != null)
+                {
+                    industries = System.Web.HttpContext.Current.Cache[sectorID.ToString()] as List<SectorModel>;
+                }
+                else
+                {
+                    industries = manager.GetSector(sectorID);
+                }
+                System.Web.HttpContext.Current.Cache.Add(sectorID.ToString(), industries, null, DateTime.Now.AddMinutes(20), TimeSpan.Zero, CacheItemPriority.Default, null);
                 return Request.CreateResponse(HttpStatusCode.OK, industries);
                 //SectorManager manager = new SectorManager();
                 ////var list = manager.GetSubSector(sectorID);
@@ -91,7 +112,18 @@ namespace FinApp.Controllers
         {
             try
             {
-                return null;
+                List<HistoryModel> historyData;
+                StockManager manager = new StockManager();
+                if (System.Web.HttpContext.Current.Cache[symbol + "history"] != null)
+                {
+                    historyData = System.Web.HttpContext.Current.Cache[symbol + "history"] as List<HistoryModel>;
+                }
+                else
+                {
+                    historyData = manager.GetHistory(symbol, null, null);
+                    System.Web.HttpContext.Current.Cache.Add(symbol + "history", historyData, null, DateTime.Now.AddMinutes(20), TimeSpan.Zero, CacheItemPriority.Default, null);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, historyData);
                 //YqlManager manager = new YqlManager();
                 //var quotes = manager.GetHistory(symbol);
                 //return Request.CreateResponse(HttpStatusCode.OK, quotes);
@@ -109,14 +141,41 @@ namespace FinApp.Controllers
             try
             {
                 StockManager manager = new StockManager();
-                manager.GetQuote(symbol);
-
-            }catch(Exception ex)
-            {
+                var quote = manager.GetQuote(symbol);
+                return Request.CreateResponse(HttpStatusCode.OK, quote);
 
             }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
 
-            return null;
+        [HttpGet]
+        [Route("trend", Name = "trend")]
+        public HttpResponseMessage ShowTrend(string symbol)
+        {
+            var historyData = System.Web.HttpContext.Current.Cache[symbol + "history"] as List<HistoryModel>;
+            try
+            {
+                //var result = historyData.GroupBy((t) => t.Date);
+                var result = (from h in historyData
+                              group h by new { Month = String.Format("{0:MMM}", new DateTime(h.Date.Year, h.Date.Month, 1)) + h.Date.Year.ToString() } into g
+                              select new
+                              {
+                                  date = g.Key.Month,
+                                  High = g.Sum(x => x.High),
+                                  Low = g.Sum(x => x.Low),
+                                  Open = g.Sum(x => x.Open),
+                                  Close = g.Sum(x => x.Close)
+                              }).OrderBy(x => x.date).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.OK, ex);
+            }
+
         }
     }
 }

@@ -2,7 +2,6 @@
 using FinApp.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 
 namespace FinApp.MiddleWare
@@ -21,15 +20,8 @@ namespace FinApp.MiddleWare
 
         private void LoadSectors()
         {
-            //Initial load of the sectors csv file
-            var sectors = GetSectorsCsv();
-            //foreach (var sector in sectors)
-            //{
-            //    var id = GetSectorId(sector.SectorName);
-            //    sector.SectorId = id;
-            //}
-
-            SectorList = sectors;
+                var sectors = GetSectorsCsv();
+                SectorList = sectors;
         }
 
         public List<SectorModel> GetSector(int sectorId)

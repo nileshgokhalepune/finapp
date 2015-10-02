@@ -76,6 +76,8 @@
     <Content Include="app\app.config.js" />
     <Content Include="app\app.module.js" />
     <Content Include="app\services\data.service.js" />
+    <Content Include="app\views\company\company.controller.js" />
+    <Content Include="app\views\company\company.html" />
     <Content Include="app\views\dashboard\dashboard.controller.js" />
     <Content Include="app\views\dashboard\dashboard.html" />
     <Content Include="assets\site.css" />
