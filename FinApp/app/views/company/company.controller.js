@@ -11,6 +11,7 @@
         ctrl.quote = {};
         ctrl.enlargeChart = enlargeChart;
         ctrl.drawYearlyTrendChart = drawYearlyTrendChart;
+        ctrl.drawDailyTrendChart = drawDailyTrendChart;
         activate();
 
         $scope.$on("$viewContentLoaded", function () {
@@ -91,7 +92,7 @@
         }
 
         function drawDailyTrendChart() {
-
+            //DatSvc.getDailyTrend(ctrl.symbol, )
         }
 
         function drawYearlyTrendChart(dim, symbol) {
@@ -110,7 +111,7 @@
                     var dimension = (dim == 1 ? ctrl.trendData[i].high : (dim == 2 ? ctrl.trendData[i].low : (dim == 3 ? ctrl.trendData[i].open : (dim == 4 ? ctrl.trendData[i].close : 0))));
                     var height = dimension < mybar.height ? parseInt(dimension) : parseInt(dimension) / mybar.height;
                     if (parseInt(height) > parseInt(maxValue)) maxValue = height;
-                    context.fillStyle = "#b90000";
+                    context.fillStyle = getRandomColor();// "#b90000";
                     drawRectangle(context, 30 + (i * 20) + i, 140 - height, 20, height, true);
                     context.textAlign = "left";
                     context.fillStyle = "#000";
@@ -132,3 +133,14 @@
 
     }
 })();
+
+
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
