@@ -26,11 +26,14 @@
                     <li><a href="#" ui-sref="#/dashboard" title="Dashboard"><i class="fa fa-2x fa-tachometer"></i></a></li>
                     <li><a ui-sref="#/company" title="Company"><i class="fa fa-2x fa-industry"></i></a></li>
                 </ul>
-            </div><!-- /.navbar-collapse -->
+            </div>
         </div>
     </nav>
     <div class="container-fluid">
         <div ui-view></div>
+        <div id="loading" class="loading" data-loading>
+            <img src="assets/ajax-loader.gif" />
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-2.1.4.js"></script>
@@ -43,6 +46,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.15/toaster.js"></script>
     <script src="app/app.module.js"></script>
     <script src="app/app.config.js"></script>
+    <script src="app/directives/directive.js"></script>
     <script src="app/services/data.service.js"></script>
     <script src="app/views/dashboard/dashboard.controller.js"></script>
     <script src="app/views/company/company.controller.js"></script>

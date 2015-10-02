@@ -160,20 +160,47 @@ namespace FinApp.Controllers
             {
                 //var result = historyData.GroupBy((t) => t.Date);
                 var result = (from h in historyData
-                              group h by new { Month = String.Format("{0:MMM}", new DateTime(h.Date.Year, h.Date.Month, 1)) + h.Date.Year.ToString() } into g
+                              group h by new { Month = String.Format("{0:MMM}", new DateTime(h.Date.Year, h.Date.Month, 1)), MonNum = h.Date.Month, Year = h.Date.Year } into g
                               select new
                               {
-                                  date = g.Key.Month,
+                                  Date = new DateTime(g.Key.Year, g.Key.MonNum, 1),
+                                  MonthWord = g.Key.Month,
+                                  month = g.Key.MonNum,
                                   High = g.Sum(x => x.High),
                                   Low = g.Sum(x => x.Low),
                                   Open = g.Sum(x => x.Open),
                                   Close = g.Sum(x => x.Close)
-                              }).OrderBy(x => x.date).ToList();
+                              }).OrderBy(x => x.Date).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.OK, ex);
+            }
+
+        }
+        [HttpGet]
+        [Route("monthtrend", Name = "monthtrend")]
+        public HttpResponseMessage MonthTrend(string symbol, int month, int year)
+        {
+            var historyData = System.Web.HttpContext.Current.Cache[symbol + "history"] as List<HistoryModel>;
+            try
+            {
+                var result = (from h in historyData
+                              where h.Date.Year == year && h.Date.Month == month
+                              select new
+                              {
+                                  Day = h.Date,
+                                  High = h.High,
+                                  Low = h.Low,
+                                  Open = h.Open,
+                                  Close = h.Close,
+                              }).OrderBy(h => h.Day).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
 
         }

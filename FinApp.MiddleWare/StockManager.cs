@@ -14,6 +14,12 @@ namespace FinApp.MiddleWare
         private const string CompanySelectQuery = "Select * from yahoo.finance.industry where id = {0}";
         private const string QuoteSelectQuery = "Select * From yahoo.finance.quote where symbol = \"{0}\"";
         private const string HistorySelectQuery = "Select * From yahoo.finance.historicaldata where symbol=\"{0}\" and startDate=\"{1}\" and endDate = \"{2}\"";
+        private DataStore _dataStore;
+        private const string IndustryCollection = "industry";
+        public StockManager()
+        {
+        }
+
         public IndustryModel GetCompanies(int industryId)
         {
             WebRequest request = WebRequest.Create(YqlPath + string.Format(CompanySelectQuery, industryId) + "&" + ENVPARAM + "&" + FORMATPARAM);
@@ -36,7 +42,7 @@ namespace FinApp.MiddleWare
         {
             if (startDate == null || endDate == null)
             {
-                startDate = DateTime.Now.AddYears(-1);
+                startDate = DateTime.Now.AddMonths(-11);
                 endDate = DateTime.Now;
             }
             var startDateParam = String.Format("{0:yyyy-MM-dd}", startDate.Value);// DateTime.ParseExact(startDate.Value.ToShortDateString(), "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentUICulture);
@@ -45,6 +51,14 @@ namespace FinApp.MiddleWare
             var json = Helper.GetResponseText(request.GetResponse());
             var jobj = JObject.Parse(json);
             return Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
+        }
+
+        public void SaveCompanies(IndustryModel industry)
+        {
+            using(_dataStore = new DataStore(IndustryCollection))
+            {
+                
+            }
         }
     }
 }

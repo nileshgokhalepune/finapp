@@ -293,3 +293,27 @@ table.scrollable thead tr {
     width:20%;
     box-shadow:0 0 40px gray;
 }
+
+.loading {
+    position:absolute;
+    display:none;
+    border: 1px solid #5c9ccc;
+    padding: 2px;
+    background-color:silver;
+    color: #ffffff;
+    opacity:0.90;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 25px;
+    width:80%;
+    height:10%;
+    box-shadow: 0 0 30px silver;
+    text-align:center;
+    z-index:100000;
+    top:25%; 
+    left:10%
+}
+
+.loading img{
+    width:25%;
+}
