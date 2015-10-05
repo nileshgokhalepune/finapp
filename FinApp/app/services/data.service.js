@@ -14,6 +14,7 @@
         this.getStocks = getStocks;
         this.getQuote = getQuote;
         this.getTrend = getTrend;
+        this.getSma = getSma;
 
         this.baseUrl = 'api/data';
 
@@ -61,6 +62,11 @@
 
         function getTrend(symbol) {
             var promise = $http({ method: 'GET', url: this.baseUrl + '/trend', params: { symbol: symbol } });
+            return promise;
+        }
+
+        function getSma(date, days, symbol) {
+            var promise = $http({ method: 'GET', url: this.baseUrl + '/sma', params: { startDate: date, avergaeOnDays: days, symbol: symbol } });
             return promise;
         }
     }

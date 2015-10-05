@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 
 namespace FinApp.MiddleWare
@@ -55,10 +56,43 @@ namespace FinApp.MiddleWare
 
         public void SaveCompanies(IndustryModel industry)
         {
-            using(_dataStore = new DataStore(IndustryCollection))
+            using (_dataStore = new DataStore(IndustryCollection))
             {
-                
+
             }
         }
+
+        /// <summary>
+        /// Returns SMA for given parameters
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="averageOnDays"></param>
+        /// <param name="model"></param>
+        /// <returns>object[]{Average, Date}</returns>
+        public string GetSimpleMovingAverage(DateTime startDate, int averageOnDays, List<HistoryModel> model)
+        {
+            var orderdedData = model.OrderBy(h => h.Date);
+            var lastDay = orderdedData.Last().Date;
+            var firstDay = orderdedData.First().Date;
+            var totalSize = Convert.ToInt32(orderdedData.Count() / averageOnDays);
+            if ((orderdedData.Count() % averageOnDays) != 0) totalSize += 1;
+            float[] average = new float[totalSize];
+            string[] dateArray = new string[totalSize];
+            int j = 0;
+            List<object> data = new List<object>();
+            for (int i = 0; i < orderdedData.Count();)
+            {
+                var avg = orderdedData.Skip(i).Take(averageOnDays).Average(h => h.Close);
+                var date = orderdedData.Skip(i).Take(averageOnDays).Last().Date;
+                data.Add(new { Average = avg, Date = date });
+                average[j] = (int)avg;
+                dateArray[j] = date.ToString();
+                j++;
+                i += averageOnDays;
+            }
+
+            return JsonConvert.SerializeObject(data);
+        }
+
     }
 }

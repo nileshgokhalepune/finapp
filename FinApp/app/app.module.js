@@ -5,6 +5,6 @@
             'ngRoute',
             'ui.router',
             'ui.bootstrap',
-            'ui.bootstrap.tpls'
+            'ui.bootstrap.tpls', 
         ]);
 })();

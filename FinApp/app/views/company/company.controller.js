@@ -12,6 +12,7 @@
         ctrl.enlargeChart = enlargeChart;
         ctrl.drawYearlyTrendChart = drawYearlyTrendChart;
         ctrl.drawDailyTrendChart = drawDailyTrendChart;
+        ctrl.drawSma = drawSma;
         activate();
 
         $scope.$on("$viewContentLoaded", function () {
@@ -129,6 +130,42 @@
             }).catch(function (error) {
 
             });
+        }
+
+        function drawSma() {
+            DataSvc.getSma(ctrl.dt1, 10, ctrl.symbol).then(function (response) {
+                ctrl.smaData = JSON.parse(response.data);
+                drawSmaLineGraph();
+            }).catch(function (error) {
+
+            })
+        }
+
+        function drawSmaLineGraph() {
+            var sma = document.getElementById("smaChart");
+            var context = sma.getContext("2d");
+            drawLine(context, 30, 10, 30, 140);
+            drawLine(context, 30, 140, 350, 140);
+            var yMax = getMaxValue(ctrl.smaData, "Average");
+            var maxValue = 0;
+            var startX = 30, starty = 0;
+            for (var i = 0; i < ctrl.smaData.length; i++) {
+                var value = ctrl.smaData[i].Average;
+                if (maxValue < parseInt(value)) maxValue = parseInt(value);
+
+                drawLine(context, startX, 10, i * 10, parseInt(value));
+                startX = 30 + parseInt(value);
+            }
+        }
+
+        function getMaxValue(list, prop) {
+            var max=0;
+            list.forEach(function (data) {
+                if (data[prop] > max) {
+                    max = data[prop];
+                }
+            });
+            return max;
         }
 
     }

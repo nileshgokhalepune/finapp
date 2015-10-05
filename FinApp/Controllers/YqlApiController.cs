@@ -204,6 +204,24 @@ namespace FinApp.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("sma", Name = "sma")]
+        public HttpResponseMessage GetSma(DateTime? startDate, int? avergaeOnDays, string symbol)
+        {
+            try
+            {
+                var historyData = System.Web.HttpContext.Current.Cache[symbol + "history"] as List<HistoryModel>;
+                StockManager manager = new StockManager();
+                var data = manager.GetSimpleMovingAverage(startDate ?? DateTime.Now.AddYears(-1), 10, historyData);
+                return Request.CreateResponse(HttpStatusCode.OK, data);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+
+        }
     }
 }
 

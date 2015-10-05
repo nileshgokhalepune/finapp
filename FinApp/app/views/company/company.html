@@ -64,10 +64,10 @@
         </div>
         <div>
             <div class="form-inline">
-                Filter: <input type="date" class="form-control" datepicker-popup="yyyy/MM/dd" format-year="yyyy" datepicker-mode="month" ng-model="dt1" />
-                <button class="btn btn-default"><i class="fa fa-refresh"></i></button>
+                Filter: <input datepicker-popup="dd.mm.yyyy" is-open="false" ng-model="ctrl.dt1"/>
+                <button class="btn btn-default" ng-click="ctrl.drawSma()"><i class="fa fa-refresh"></i></button>
             </div>
-            <canvas id="dailyLine"></canvas>
+            <canvas id="smaChart"></canvas>
         </div>
     </div>
     <div class="col-lg-9">
