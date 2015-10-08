@@ -100,40 +100,58 @@
             if (!symbol) symbol = ctrl.symbol;
             var mybar = document.getElementById("myBar");
             var context = mybar.getContext("2d");
+
             context.clearRect(0, 0, mybar.width, mybar.height);
             DataSvc.getTrend(symbol).then(function (response) {
                 ctrl.trendData = response.data;
+                var labels = [];
+                var dataPoints = []
+                ctrl.trendData.forEach(function (data) {
+                    labels.push(data.monthWord);
+                    dataPoints.push(data[dim.toLowerCase()]);
+                });
+                var data = {
+                    labels: labels,
+                    datasets: [{
+                        fillColor: "rgba(151,187,205,0.5)",
+                        strokeColor: "rgba(151,187,205,0.8)",
+                        highlightFill: "rgba(151,187,205,0.75)",
+                        highlightStroke: "rgba(151,187,205,1)",
+                        data: dataPoints
+                    }]
+                }
+                var myBarChart = new Chart(context).Bar(data);
                 //drawBarChart(context, ctrl.trendData, 50, 100, 1000, 50);
-                drawLine(context, 30, 10, 30, 140);
-                drawLine(context, 30, 140, 350, 140);
-                var maxValue = 0;
-                for (var i = 0; i < ctrl.trendData.length; i++) {
-                    var name = ctrl.trendData[i].monthWord;
-                    var dimension = (dim == 1 ? ctrl.trendData[i].high : (dim == 2 ? ctrl.trendData[i].low : (dim == 3 ? ctrl.trendData[i].open : (dim == 4 ? ctrl.trendData[i].close : 0))));
-                    var height = dimension < mybar.height ? parseInt(dimension) : parseInt(dimension) / mybar.height;
-                    if (parseInt(height) > parseInt(maxValue)) maxValue = height;
-                    context.fillStyle = getRandomColor();// "#b90000";
-                    drawRectangle(context, 30 + (i * 20) + i, 140 - height, 20, height, true);
-                    context.textAlign = "left";
-                    context.fillStyle = "#000";
-                    context.fillText(name, 30 + (i * 20) + i, 140 + 10, 200);
-                }
+                ////drawLine(context, 30, 10, 30, 140);
+                ////drawLine(context, 30, 140, 350, 140);
+                ////var maxValue = 0;
+                ////for (var i = 0; i < ctrl.trendData.length; i++) {
+                ////    var name = ctrl.trendData[i].monthWord;
+                ////    var dimension = (dim == 1 ? ctrl.trendData[i].high : (dim == 2 ? ctrl.trendData[i].low : (dim == 3 ? ctrl.trendData[i].open : (dim == 4 ? ctrl.trendData[i].close : 0))));
+                ////    var height = dimension < mybar.height ? parseInt(dimension) : parseInt(dimension) / mybar.height;
+                ////    if (parseInt(height) > parseInt(maxValue)) maxValue = height;
+                ////    context.fillStyle = getRandomColor();// "#b90000";
+                ////    drawRectangle(context, 30 + (i * 20) + i, 140 - height, 20, height, true);
+                ////    context.textAlign = "left";
+                ////    context.fillStyle = "#000";
+                ////    context.fillText(name, 30 + (i * 20) + i, 140 + 10, 200);
+                ////}
 
-                var numMarkers = Math.ceil(maxValue / 50);
-                context.textAlign = "right";
-                context.fillStyle = "#000";
-                var markerValue = 0;
-                for (var i = 0; i < numMarkers; i++) {
-                    context.fillText(markerValue, 30 - 5, 140 - markerValue, 50);
-                    markerValue += 50
-                }
+                ////var numMarkers = Math.ceil(maxValue / 50);
+                ////context.textAlign = "right";
+                ////context.fillStyle = "#000";
+                ////var markerValue = 0;
+                ////for (var i = 0; i < numMarkers; i++) {
+                ////    context.fillText(markerValue, 30 - 5, 140 - markerValue, 50);
+                ////    markerValue += 50
+                ////}
             }).catch(function (error) {
 
             });
         }
 
         function drawSma() {
-            DataSvc.getSma(ctrl.dt1, 10, ctrl.symbol).then(function (response) {
+            DataSvc.getSma(ctrl.dt1, parseInt(ctrl.averageOnDays), ctrl.symbol).then(function (response) {
                 ctrl.smaData = JSON.parse(response.data);
                 drawSmaLineGraph();
             }).catch(function (error) {
@@ -144,25 +162,42 @@
         function drawSmaLineGraph() {
             var sma = document.getElementById("smaChart");
             var context = sma.getContext("2d");
-            drawLine(context, 30, 10, 30, 140);
-            drawLine(context, 30, 140, 350, 140);
-            var yMax = getMaxValue(ctrl.smaData, "Average");
-            var maxValue = 0;
-            var startX = 30, starty = 0;
-            for (var i = 0; i < ctrl.smaData.length; i++) {
-                var value = ctrl.smaData[i].Average;
-                if (maxValue < parseInt(value)) maxValue = parseInt(value);
-
-                drawLine(context, startX, 10, i * 10, parseInt(value));
-                startX = 30 + parseInt(value);
+            var labels = [];
+            var dataPoints = [];
+            ctrl.smaData.forEach(function (data) {
+                labels.push(data.Date);
+                dataPoints.push(data.Average);
+            })
+            var data = {
+                labels: labels,
+                datasets: [{
+                    fillColor: "rgba(110,200,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#000",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: dataPoints
+                }]
             }
+            var myLineChart = new Chart(context).Line(data, {
+                bezierCurve: false
+            });
         }
 
-        function getMaxValue(list, prop) {
-            var max=0;
+        function getMinMaxValue(list, prop, findmax) {
+            var max = 0;
+            var min = list[0][prop];
+
             list.forEach(function (data) {
-                if (data[prop] > max) {
-                    max = data[prop];
+                if (findmax) {
+                    if (data[prop] > max) {
+                        max = data[prop];
+                    }
+                } else if (!findmax) {
+                    if (data[prop] < min) {
+                        min = data[prop];
+                    }
                 }
             });
             return max;
@@ -171,6 +206,78 @@
     }
 })();
 
+
+var CanvasChart = function () {
+    var ctx;
+    var margin = { top: 40, left: 75, right: 0, bottom: 75 };
+    var chartHeight, chartWidth, yMax, xMax, data;
+    var maxYValue = 0;
+    var ration = 0;
+    var renderType = { lines: 'lines', points: 'points' };
+    return {
+        renderTyp: renderType,
+        render: render
+    }
+}();
+
+var render = function (canvasId, dataObj) {
+    data = dataObj;
+    getMasxDataYValues();
+    var canvas = document.getElementById(canvasId);
+    chartHeight = canvas.attr('height');
+    chartWidth = canvas.attr('width');
+    xMax = chartWidth - (margin.left + margin.right);
+    yMax = chartHeight - (margin.top + margin.bottom);
+    ration = yMax / maxYValue;
+    ctx = canvas.getContext("2d");
+    renderChart();
+}
+
+var renderChart = function () {
+    renderBackground();
+    renderText();
+    renderLinesAndLabels();
+    if (data.renderTypes == undefined || data.renderTypes == null) data.renderTypes = [renderTypes.lines];
+    for (var i = 0; i < data.renderTypes.length; i++) {
+        renderData(data.renderTypes[i]);
+    }
+}
+
+var renderBackground = function () {
+    var lingrad = ctx.createLinearGradient(margin.left, margin.top, xMax - margin.right, yMax);
+    lingrad.addColorStop(0.0, "#d4d4d4");
+    lingrad.addColorStop(0.2, "#fff");
+    lingrad.addColorStop(0.8, "#fff");
+    lingrad.addColorStop(1, "#d4d4d4");
+    ctx.fillStyle = lingrad;
+    ctx.fillRect(margin.left, margin.top, xMax - margin.left, yMax - margin.top);
+    ctx.fillStyle = 'black';
+}
+
+var renderText = function () {
+    var labelFont = (data.labelFont !== null) ? data.labelFont : '20pt Arial';
+    ctx.font = labelFont;
+    ctx.textAlign = "center";
+    var txtSize = ctx.measureText(data.xLabel);
+    ctx.fillText(data.xLabel, margin.left + (xMax / 2) - (txtSize.width / 2), yMax + (margin.bottom / 1.2));
+    ctx.save();
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = labelFont;
+    ctx.fillText(data.yLabel, (yMax / 2) * -1, margin.left / 4);
+    ctx.restore();
+}
+
+var renderLinesAndLabels = function () {
+    var yInc = yMax / data.dataPoints.length;
+    var yPos = 0;
+    var yLabelInc = (maxYValue * ration) / data.dataPoints.length;
+    var xInc = getXInc();
+    var xPos = margin.left;
+    for (var i = 0; i < data.dataPoints.length; i++) {
+        yPos += (i == 0) ? margin.top : yInc;
+        drawLine(margin.left, yPos, xMax, yPos, "#e8e8e8");
+    }
+}
 
 
 function getRandomColor() {

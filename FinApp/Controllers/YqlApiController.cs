@@ -222,6 +222,12 @@ namespace FinApp.Controllers
             }
 
         }
+
+        public HttpResponseMessage SearchStock(string symbol, string companyName)
+        {
+            return null;
+
+        }
     }
 }
 

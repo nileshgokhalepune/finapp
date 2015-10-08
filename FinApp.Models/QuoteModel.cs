@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace FinApp.Models
 {
@@ -21,6 +22,8 @@ namespace FinApp.Models
 
     public class HistoryModel
     {
+        [JsonIgnore]
+        public string Symbol { get; set; }
         public DateTime Date { get; set; }
         public float Open { get; set; }
         public float High { get; set; }

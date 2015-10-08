@@ -63,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SectorManager.cs" />
     <Compile Include="StockManager.cs" />
+    <Compile Include="YqlService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

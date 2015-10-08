@@ -20,8 +20,15 @@ namespace FinApp.MiddleWare
 
         private void LoadSectors()
         {
-                var sectors = GetSectorsCsv();
-                SectorList = sectors;
+            List<SectorModel> sectors;
+            sectors = GetCachedSectors();
+            if (sectors == null || sectors.Count <= 0)
+            {
+                sectors = GetSectorsCsv();
+                SaveSectors(sectors);
+
+            }
+            SectorList = sectors;
         }
 
         public List<SectorModel> GetSector(int sectorId)
@@ -91,6 +98,21 @@ namespace FinApp.MiddleWare
             return Convert.ToInt32(conname.Substring(0, conname.IndexOf(CONAMEUHTML)));
         }
 
+        public List<SectorModel> GetCachedSectors()
+        {
+            using (var db = new DataStore<SectorModel>("sectors"))
+            {
+                return db.GetCollection();
+            }
+        }
+
+        public void SaveSectors(List<SectorModel> sectors)
+        {
+            using(var db= new DataStore<SectorModel>("sectors"))
+            {
+                db.SaveMany(sectors);
+            }
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FinApp.Helpers;
+using FinApp.MiddleWare;
 using FinApp.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,55 +13,34 @@ namespace FinApp.MiddleWare
 {
     public class StockManager : FinBase
     {
-        private const string CompanySelectQuery = "Select * from yahoo.finance.industry where id = {0}";
-        private const string QuoteSelectQuery = "Select * From yahoo.finance.quote where symbol = \"{0}\"";
-        private const string HistorySelectQuery = "Select * From yahoo.finance.historicaldata where symbol=\"{0}\" and startDate=\"{1}\" and endDate = \"{2}\"";
-        private DataStore _dataStore;
         private const string IndustryCollection = "industry";
+        private YqlService _yqlService;
         public StockManager()
         {
-        }
-
-        public IndustryModel GetCompanies(int industryId)
-        {
-            WebRequest request = WebRequest.Create(YqlPath + string.Format(CompanySelectQuery, industryId) + "&" + ENVPARAM + "&" + FORMATPARAM);
-            var json = Helper.GetResponseText(request.GetResponse());
-            var jobj = JObject.Parse(json);
-            jobj = JObject.Parse(jobj["query"]["results"]["industry"].ToString());
-            var list = Helper.DeserializeJson<IndustryModel>(jobj);
-            return list;
-        }
-
-        public QuoteModel GetQuote(string symbol)
-        {
-            WebRequest request = WebRequest.Create(YqlPath + string.Format(QuoteSelectQuery, symbol) + "&" + ENVPARAM + "&" + FORMATPARAM);
-            var json = Helper.GetResponseText(request.GetResponse());
-            var jobj = JObject.Parse(json);
-            return Helper.DeserializeJson<QuoteModel>(JObject.Parse(jobj["query"]["results"]["quote"].ToString()));
+            _yqlService = new YqlService();
         }
 
         public List<HistoryModel> GetHistory(string symbol, DateTime? startDate, DateTime? endDate)
         {
-            if (startDate == null || endDate == null)
+            using (var db = new DataStore<HistoryModel>("history"))
             {
-                startDate = DateTime.Now.AddMonths(-11);
-                endDate = DateTime.Now;
-            }
-            var startDateParam = String.Format("{0:yyyy-MM-dd}", startDate.Value);// DateTime.ParseExact(startDate.Value.ToShortDateString(), "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentUICulture);
-            var endDateParam = String.Format("{0:yyyy-MM-dd}", endDate.Value);// DateTime.ParseExact(endDate.Value.ToShortDateString(), "yyyy-MM-dd", System.Globalization.CultureInfo.CurrentUICulture);
-            WebRequest request = WebRequest.Create(YqlPath + string.Format(HistorySelectQuery, symbol, startDateParam, endDateParam) + "&" + ENVPARAM + "&" + FORMATPARAM);
-            var json = Helper.GetResponseText(request.GetResponse());
-            var jobj = JObject.Parse(json);
-            return Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
-        }
-
-        public void SaveCompanies(IndustryModel industry)
-        {
-            using (_dataStore = new DataStore(IndustryCollection))
-            {
-
+                var history = db.GetCollection().Where(x => x.Symbol == symbol && x.Date >= startDate.Value && x.Date <= endDate.Value);
+                if (!history.Any())
+                {
+                    if (startDate == null || endDate == null)
+                    {
+                        startDate = DateTime.Now.AddMonths(-11);
+                        endDate = DateTime.Now;
+                    }
+                    var json = _yqlService.FetchHistory(symbol, startDate.Value, endDate.Value);
+                    var jobj = JObject.Parse(json);
+                    history = Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
+                    history.ToList().ForEach(x => x.Symbol = symbol);
+                }
+                return history.ToList();
             }
         }
+
 
         /// <summary>
         /// Returns SMA for given parameters
@@ -71,7 +51,7 @@ namespace FinApp.MiddleWare
         /// <returns>object[]{Average, Date}</returns>
         public string GetSimpleMovingAverage(DateTime startDate, int averageOnDays, List<HistoryModel> model)
         {
-            var orderdedData = model.OrderBy(h => h.Date);
+            var orderdedData = model.OrderBy(h => h.Date).Where(h => h.Date >= startDate);
             var lastDay = orderdedData.Last().Date;
             var firstDay = orderdedData.First().Date;
             var totalSize = Convert.ToInt32(orderdedData.Count() / averageOnDays);
@@ -83,7 +63,7 @@ namespace FinApp.MiddleWare
             for (int i = 0; i < orderdedData.Count();)
             {
                 var avg = orderdedData.Skip(i).Take(averageOnDays).Average(h => h.Close);
-                var date = orderdedData.Skip(i).Take(averageOnDays).Last().Date;
+                var date = orderdedData.Skip(i).Take(averageOnDays).Last().Date.ToShortDateString();
                 data.Add(new { Average = avg, Date = date });
                 average[j] = (int)avg;
                 dateArray[j] = date.ToString();
@@ -94,5 +74,63 @@ namespace FinApp.MiddleWare
             return JsonConvert.SerializeObject(data);
         }
 
+
+        public IndustryModel GetCompanies(int industryId)
+        {
+            using (var db = new DataStore<IndustryModel>("industry"))
+            {
+                var industry = db.GetCollection().Find(x => x.Id == industryId);
+                if (industry == null)
+                {
+                    var json = _yqlService.FetchCompanies(industryId);
+                    var jobj = JObject.Parse(json);
+                    jobj = JObject.Parse(jobj["query"]["results"]["industry"].ToString());
+                    industry = Helper.DeserializeJson<IndustryModel>(jobj);
+                    SaveIndustry(industry);
+                }
+
+                return industry;
+            }
+        }
+
+        public QuoteModel GetQuote(string symbol)
+        {
+            using (var db = new DataStore<QuoteModel>("quotes"))
+            {
+                var quote = db.GetCollection().Where(x => x.Symbol == symbol).FirstOrDefault();
+                if (quote == null)
+                {
+                    var json = _yqlService.FetchQuote(symbol);
+                    var jobj = JObject.Parse(json);
+                    quote = Helper.DeserializeJson<QuoteModel>(JObject.Parse(jobj["query"]["results"]["quote"].ToString()));
+                    SaveQuote(quote);
+
+                }
+                return quote;
+            }
+        }
+
+        #region Save Methods
+        public void SaveIndustry(IndustryModel industry)
+        {
+            using (var ds = new DataStore<IndustryModel>(IndustryCollection))
+            {
+                ds.SaveOne(industry);
+            }
+        }
+
+        public void SaveQuote(QuoteModel quote)
+        {
+            using (var db = new DataStore<QuoteModel>("quotes"))
+            {
+                db.SaveOne(quote);
+            }
+        }
+
+        public void SaveHistory(List<HistoryModel> histor)
+        {
+
+        }
+        #endregion
     }
 }

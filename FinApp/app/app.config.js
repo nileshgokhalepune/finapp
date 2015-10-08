@@ -9,14 +9,12 @@
     function configureApp($stateProvider, $urlRouteProvider) { 
         $urlRouteProvider.when('', 'dashboard');
 
-        $stateProvider.state('dasboard', {
+        $stateProvider.state('dashboard', {
             url: '/dashboard',
             controller: 'DashboardCtrl',
             controllerAs: 'ctrl',
             templateUrl: 'app/views/dashboard/dashboard.html',
-        });
-
-        $stateProvider.state('company', {
+        }).state('company', {
             url: '/company/{symbol}',
             controller: 'CompanyCtrl',
             controllerAs: 'ctrl',
