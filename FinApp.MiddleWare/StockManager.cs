@@ -36,6 +36,7 @@ namespace FinApp.MiddleWare
                     var jobj = JObject.Parse(json);
                     history = Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
                     history.ToList().ForEach(x => x.Symbol = symbol);
+                    SaveHistory(history.ToList());
                 }
                 return history.ToList();
             }
@@ -127,9 +128,12 @@ namespace FinApp.MiddleWare
             }
         }
 
-        public void SaveHistory(List<HistoryModel> histor)
+        public void SaveHistory(List<HistoryModel> history)
         {
-
+            using (var db = new DataStore<HistoryModel>("history"))
+            {
+                db.SaveMany(history);
+            }
         }
         #endregion
     }

@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using System;
 
 namespace FinApp.Models
@@ -24,6 +26,8 @@ namespace FinApp.Models
     {
         [JsonIgnore]
         public string Symbol { get; set; }
+        [BsonId]
+        public ObjectId _id { get; set; }
         public DateTime Date { get; set; }
         public float Open { get; set; }
         public float High { get; set; }
