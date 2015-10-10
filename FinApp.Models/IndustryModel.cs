@@ -11,5 +11,6 @@ namespace FinApp.Models
         public string Name { get; set; }
         [JsonProperty("company")]
         public List<CompanyModel> Company { get; set; }
+        
     }
 }

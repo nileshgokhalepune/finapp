@@ -32,5 +32,13 @@ namespace FinApp.MiddleWare
             var json = Helper.GetResponseText(request.GetResponse());
             return json;
         }
+
+        public string FetchSubSectorsData(int id = 0)
+        {
+            var sectorId = id == 0 ? CONAMEUSCS_PREFIX : id.ToString();
+            WebRequest request = WebRequest.Create(BizCsvPath + sectorId + CONAMEUCSV);
+            var csv = Helper.GetResponseText(request.GetResponse());
+            return csv;
+        }
     }
 }

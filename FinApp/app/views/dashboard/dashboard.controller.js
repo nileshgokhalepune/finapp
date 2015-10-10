@@ -3,17 +3,20 @@
 
     angular.module('finapp').controller('DashboardCtrl', DashboardCtrl);
 
-    DashboardCtrl.$inject = ['$q', '$log', 'DataSvc'];
+    DashboardCtrl.$inject = ['$q', '$log', 'DataSvc', '$stateParams', '$scope', '$timeout'];
 
-    function DashboardCtrl($q, $log, DataSvc) {
+    function DashboardCtrl($q, $log, DataSvc, $stateParams, $scope, $timeout) {
         var ctrl = this;
+        ctrl.selectedSector = $stateParams.sector;
+        ctrl.selectedIndustry = $stateParams.industry;
+
         ctrl.industries = '';
         ctrl.sectors = '';
         ctrl.getHistoricalData = getHistoricalData;
         ctrl.getIndustries = getIndustries;
         ctrl.getStocks = getStocks;
         ctrl.getQuote = getQuote;
-
+        ctrl.currentIndustry;
 
         activate();
 
@@ -22,6 +25,14 @@
                 $log.debug("success");
                 DataSvc.getSectors().then(function (response) {
                     ctrl.sectors = response.data;
+                    if (ctrl.selectedSector) {
+                        $timeout(function () {
+                            $scope.$apply(function () {
+                                ctrl.sector = ctrl.selectedSector;
+                            });
+                        }, 1000)
+
+                    }
                 }).catch(function (error) {
                     $log.error(error);
                 });
@@ -32,6 +43,7 @@
         }
 
         function getIndustries(sectorId) {
+            ctrl.companies = [];
             DataSvc.getIndustries(ctrl.sector.sectorId).then(function (response) {
                 ctrl.industries = response.data;
             }).catch(function (error) {
@@ -49,6 +61,7 @@
         }
 
         function getStocks(row) {
+            ctrl.currentIndustry = row.sectorId;
             DataSvc.getStocks(row.sectorId).then(function (response) {
                 ctrl.companies = response.data.company;
             }).catch(function (error) {

@@ -2,18 +2,21 @@
 using FinApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace FinApp.MiddleWare
 {
     public class SectorManager : FinBase
     {
+        private YqlService _yqlService;
         private string SectorHtml { get; set; }
 
         public List<SectorModel> SectorList { get; set; }
 
         public SectorManager(bool loadDefault = false)
         {
+            _yqlService = new YqlService();
             if (loadDefault)
                 LoadSectors();
         }
@@ -24,7 +27,7 @@ namespace FinApp.MiddleWare
             sectors = GetCachedSectors();
             if (sectors == null || sectors.Count <= 0)
             {
-                sectors = GetSectorsCsv();
+                sectors = GetSubSectors();
                 SaveSectors(sectors);
 
             }
@@ -33,23 +36,30 @@ namespace FinApp.MiddleWare
 
         public List<SectorModel> GetSector(int sectorId)
         {
-            var list = GetSectorsCsv(sectorId);
-            return list;
+            List<SectorModel> lst = null;
+            using (var db = new DataStore<SectorModel>("subsectors"))
+            {
+                lst = db.GetCollection().Where(x => x.ParentSectorId == sectorId).ToList();
+            }
+            if (lst != null && !lst.Any())
+            {
+                lst = GetSubSectors(sectorId);
+                SaveSubSectors(lst);
+            }
+            return lst;
         }
 
-        private List<SectorModel> GetSectorsCsv(int id = 0)
+        private List<SectorModel> GetSubSectors(int id = 0)
         {
-            var sectorId = id == 0 ? CONAMEUSCS_PREFIX : id.ToString();
-            WebRequest request = WebRequest.Create(BizCsvPath + sectorId + CONAMEUCSV);
-            var csv = Helper.GetResponseText(request.GetResponse());
-            var rows = csv.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var csvData = _yqlService.FetchSubSectorsData(id);
+            var rows = csvData.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             List<SectorModel> sectorsList = new List<SectorModel>();
             for (int i = 1; i < rows.Length; i++)
             {
                 var columns = rows[i].Split(',');
                 if (columns[0] == "\0") continue;
                 var sectorid = GetSectorId(columns[0].Replace("\"", ""), id);
-                sectorsList.Add(new SectorModel() { SectorName = columns[0].Replace("\"", ""), SectorId = sectorid });
+                sectorsList.Add(new SectorModel() { ParentSectorId = id, SectorName = columns[0].Replace("\"", ""), SectorId = sectorid });
 
             }
 
@@ -108,11 +118,18 @@ namespace FinApp.MiddleWare
 
         public void SaveSectors(List<SectorModel> sectors)
         {
-            using(var db= new DataStore<SectorModel>("sectors"))
+            using (var db = new DataStore<SectorModel>("sectors"))
             {
                 db.SaveMany(sectors);
             }
         }
 
+        public void SaveSubSectors(List<SectorModel> list)
+        {
+            using (var db = new DataStore<SectorModel>("subsectors"))
+            {
+                db.SaveMany(list);
+            }
+        }
     }
 }

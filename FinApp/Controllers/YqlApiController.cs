@@ -212,9 +212,16 @@ namespace FinApp.Controllers
             try
             {
                 var historyData = System.Web.HttpContext.Current.Cache[symbol + "history"] as List<HistoryModel>;
-                StockManager manager = new StockManager();
-                var data = manager.GetSimpleMovingAverage(startDate ?? DateTime.Now.AddYears(-1), 10, historyData);
-                return Request.CreateResponse(HttpStatusCode.OK, data);
+                if (historyData != null)
+                {
+                    StockManager manager = new StockManager();
+                    var data = manager.GetSimpleMovingAverage(startDate ?? DateTime.Now.AddYears(-1), 10, historyData);
+                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                }
+                else
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.Gone, new Exception("Please refresh the page!!"));
+                }
             }
             catch (Exception ex)
             {

@@ -3,16 +3,20 @@
 
     angular.module('finapp').controller('CompanyCtrl', DashboardCtrl);
 
-    DashboardCtrl.$inject = ['$scope', '$q', '$log', '$stateParams', 'DataSvc'];
+    DashboardCtrl.$inject = ['$scope', '$q', '$log', '$stateParams', 'DataSvc', '$state'];
 
-    function DashboardCtrl($scope, $q, $log, $stateParams, DataSvc) {
+    function DashboardCtrl($scope, $q, $log, $stateParams, DataSvc, $state) {
         var ctrl = this;
         ctrl.symbol = $stateParams.symbol;
+        ctrl.sector = $stateParams.sector;
+        ctrl.industry = $stateParams.industry;
+
         ctrl.quote = {};
         ctrl.enlargeChart = enlargeChart;
         ctrl.drawYearlyTrendChart = drawYearlyTrendChart;
         ctrl.drawDailyTrendChart = drawDailyTrendChart;
         ctrl.drawSma = drawSma;
+        ctrl.navigateToDashboard = navigateToDashboard;
         activate();
 
         $scope.$on("$viewContentLoaded", function () {
@@ -201,6 +205,10 @@
                 }
             });
             return max;
+        }
+
+        function navigateToDashboard() {
+            $state.go("dashboard", { sector: ctrl.sector, industry: ctrl.industry });
         }
 
     }

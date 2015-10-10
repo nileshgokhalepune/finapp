@@ -16,9 +16,27 @@
                     </li>
                 </ul>
             </div>
-        </div> 
-        <div class="col-lg-10">
-            <ul class="list-inline"><li ng-repeat="company in ctrl.companies"><a ui-sref="company({symbol: company.symbol})" >{{company.name}}</a></li></ul>
+        </div>
+        <div class="scrollableContainer" ng-show="ctrl.companies && ctrl.companies.length > 0">
+            <div class="panel panel-header form-inline">
+                <input ng-model="ctrl.searchCompany" class="form-control" />
+            </div>
+            <div class="scrollingArea">
+                <div class="col-lg-10">
+                    <ul class="list-group">
+                        <li ng-repeat="company in ctrl.companies | filter : ctrl.searchCompany" class="list-group-item">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <a ui-sref="company({symbol: company.symbol, sector: ctrl.sector.sectorId, industry: ctrl.currentIndustry})">{{company.name}}</a>
+                                </div>
+                                <div class="col-lg-6">
+                                    <span>{{company.symbol}}</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </section>

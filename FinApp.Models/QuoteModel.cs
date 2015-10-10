@@ -7,6 +7,8 @@ namespace FinApp.Models
 {
     public class QuoteModel
     {
+        [BsonId]
+        public ObjectId _id { get; set; }
         public string Symbol { get; set; }
         public int? AverageDailyVolume { get; set; }
         public float? Change { get; set; }
@@ -29,12 +31,12 @@ namespace FinApp.Models
         [BsonId]
         public ObjectId _id { get; set; }
         public DateTime Date { get; set; }
-        public float Open { get; set; }
-        public float High { get; set; }
-        public float Low { get; set; }
-        public float Close { get; set; }
-        public long Volumne { get; set; }
-        public float Adj_Close { get; set; }
+        public float? Open { get; set; }
+        public float? High { get; set; }
+        public float? Low { get; set; }
+        public float? Close { get; set; }
+        public long? Volume { get; set; }
+        public float? Adj_Close { get; set; }
     }
 
 }
