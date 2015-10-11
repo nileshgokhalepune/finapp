@@ -30,7 +30,7 @@
                             $scope.$apply(function () {
                                 ctrl.sector = ctrl.selectedSector;
                             });
-                        }, 1000)
+                        }, 10000)
 
                     }
                 }).catch(function (error) {
