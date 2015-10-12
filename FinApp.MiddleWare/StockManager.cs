@@ -26,7 +26,7 @@ namespace FinApp.MiddleWare
             {
                 if (startDate == null || endDate == null)
                 {
-                    startDate = DateTime.Now.AddMonths(-11);
+                    startDate = DateTime.Now.AddYears(-3);
                     endDate = DateTime.Now;
                 }
 
@@ -35,9 +35,12 @@ namespace FinApp.MiddleWare
                 {
                     var json = _yqlService.FetchHistory(symbol, startDate.Value, endDate.Value);
                     var jobj = JObject.Parse(json);
-                    history = Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
-                    history.ToList().ForEach(x => x.Symbol = symbol);
-                    SaveHistory(history.ToList());
+                    if (Convert.ToInt32(((JValue)(jobj["query"]["count"])).Value) > 0)
+                    {
+                        history = Helper.DeserializeJson<List<HistoryModel>>(JArray.Parse(jobj["query"]["results"]["quote"].ToString()));
+                        history.ToList().ForEach(x => x.Symbol = symbol);
+                        SaveHistory(history.ToList());
+                    }
                 }
                 return history.ToList();
             }
@@ -54,7 +57,7 @@ namespace FinApp.MiddleWare
         public string GetSimpleMovingAverage(DateTime startDate, int averageOnDays, List<HistoryModel> model)
         {
             var sma = (from m in model
-                       let avg = model.Where(x => x.Date <= m.Date && x.Date >= m.Date.AddDays(-averageOnDays)).Average(x => x.Close)
+                       let avg = model.Where(x => x.Date <= startDate && x.Date >= m.Date.AddDays(-averageOnDays)).Average(x => x.Close)
                        select new
                        {
                            Average = avg,
@@ -69,27 +72,6 @@ namespace FinApp.MiddleWare
                                       Average = grp.Average(x => x.Average)
                                   });
             return JsonConvert.SerializeObject(groupedByMonth.ToList());
-            //var orderdedData = model.OrderBy(h => h.Date).Where(h => h.Date >= startDate);
-            //var lastDay = orderdedData.Last().Date;
-            //var firstDay = orderdedData.First().Date;
-            //var totalSize = Convert.ToInt32(orderdedData.Count() / averageOnDays);
-            //if ((orderdedData.Count() % averageOnDays) != 0) totalSize += 1;
-            //float[] average = new float[totalSize];
-            //string[] dateArray = new string[totalSize];
-            //int j = 0;
-            //List<object> data = new List<object>();
-            //for (int i = 0; i < orderdedData.Count();)
-            //{
-            //    var avg = orderdedData.Skip(i).Take(averageOnDays).Average(h => h.Close);
-            //    var date = orderdedData.Skip(i).Take(averageOnDays).Last().Date.ToShortDateString();
-            //    data.Add(new { Average = avg, Date = date });
-            //    average[j] = (int)avg;
-            //    dateArray[j] = date.ToString();
-            //    j++;
-            //    i += averageOnDays;
-            //}
-
-            //return JsonConvert.SerializeObject(data);
         }
 
 

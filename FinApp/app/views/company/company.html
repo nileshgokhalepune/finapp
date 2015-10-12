@@ -71,7 +71,9 @@
                 <span class="form-control">Average on Days:</span> <input type="text" ng-model="ctrl.averageOnDays" class="form-control" />
                 <button class="btn btn-default" ng-click="ctrl.drawSma()"><i class="fa fa-refresh"></i></button>
             </div>
-            <canvas id="smaChart" style="margin:10px 10px 0 10px"></canvas>
+            <div id="smaChartContainer" ng-mousehover="ctrl.zoomChart('smaChartContainer')">
+                <canvas id="smaChart" class="showbox scale" style="margin:10px 10px 0 10px" ng-click="ctrl.zoomChart('smaChartContainer')"></canvas>
+            </div>
         </div>
     </div>
     <div class="col-lg-8">
@@ -92,6 +94,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td colspan="7" style="text-align:center"><span class="bg bg-danger">History not found</span> </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="ctrl.historyData && ctrl.historyData.length > 0 ">
                             <tr ng-repeat="row in ctrl.historyData">
                                 <td>{{row.date | date: 'yyyy-MM-dd'}}</td>
                                 <td>{{row.open}}</td>

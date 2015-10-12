@@ -17,6 +17,7 @@
         ctrl.drawDailyTrendChart = drawDailyTrendChart;
         ctrl.drawSma = drawSma;
         ctrl.navigateToDashboard = navigateToDashboard;
+        ctrl.zoomChart = zoomChart;
         activate();
 
         $scope.$on("$viewContentLoaded", function () {
@@ -211,6 +212,9 @@
             $state.go("dashboard", { sector: ctrl.sector, industry: ctrl.industry });
         }
 
+        function zoomChart(id) {
+            angular.element("#" + id).addClass("chartZoom");
+        }
     }
 })();
 

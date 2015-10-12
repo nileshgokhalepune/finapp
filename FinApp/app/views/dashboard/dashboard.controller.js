@@ -19,7 +19,7 @@
         ctrl.currentIndustry;
 
         activate();
-
+         
         function activate() {
             DataSvc.checkSiteStatus().then(function () {
                 $log.debug("success");
@@ -27,11 +27,16 @@
                     ctrl.sectors = response.data;
                     if (ctrl.selectedSector) {
                         $timeout(function () {
-                            $scope.$apply(function () {
-                                ctrl.sector = ctrl.selectedSector;
+                            ctrl.sectors.forEach(function (data) {
+                                if (data.sectorId == ctrl.selectedSector) {
+                                    $scope.$apply(function () {
+                                        ctrl.sector = data;
+                                    });
+                                    
+                                }
                             });
-                        }, 10000)
-
+                        }, 1000);
+                        
                     }
                 }).catch(function (error) {
                     $log.error(error);
