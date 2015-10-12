@@ -1,4 +1,7 @@
-﻿namespace YqlDataDownloader
+﻿using FinApp.MiddleWare;
+using System.Threading.Tasks;
+
+namespace YqlDataDownloader
 {
     class Program
     {
@@ -6,8 +9,14 @@
         {
             while (true)
             {
-                   
+                Parallel.Invoke(() => GetSectors());
             }
         }
+
+        static void GetSectors()
+        {
+            YqlService service = new YqlService();
+        }
+
     }
 }
