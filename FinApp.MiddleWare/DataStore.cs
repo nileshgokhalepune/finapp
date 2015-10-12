@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace FinApp.MiddleWare
 {
@@ -35,6 +36,13 @@ namespace FinApp.MiddleWare
         {
             _collection.InsertManyAsync(list);
         }
+
+        public void Find(Expression<Func<T, bool>> expression)
+        {
+            FilterDefinition<T> filter
+            _collection.Find(filter);
+        }
+
         public void Dispose()
         {
             Dispose(true);

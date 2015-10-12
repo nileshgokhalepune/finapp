@@ -2,7 +2,6 @@
     <div class="panel panel-header">
         <div class="form-inline">
             <label>Sectors</label>
-            {{ctrl.sector}}
             <select ng-options="sector.sectorName for sector in ctrl.sectors track by sector.sectorId" ng-model="ctrl.sector" class="form-control" ng-change="ctrl.getIndustries(sector.sectorId)"></select>
             <label>Search Stock/Company</label>
             <input type="text" ng-model="ctrl.searchQuote" class="form-control" />

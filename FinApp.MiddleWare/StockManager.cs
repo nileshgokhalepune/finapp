@@ -105,6 +105,8 @@ namespace FinApp.MiddleWare
                     jobj = JObject.Parse(jobj["query"]["results"]["industry"].ToString());
                     industry = Helper.DeserializeJson<IndustryModel>(jobj);
                     industry.Company.ForEach(x => x.SectorId = industry.Id);
+                    
+                    db.Find()
                     SaveIndustry(industry);
                 }
 
